@@ -10,7 +10,7 @@ export default function Square({ black, children }) {
         color: stroke,
         width: "100%",
         height: "100%",
-        border: "1px solid red",
+        // border: "1px sol id red",
       }}
     >
       {children}
