@@ -1,0 +1,57 @@
+{
+  "husked_coconut": {
+    "CardIndex": "1",
+    "CardName": "husked_coconut",
+    "CardText": "青椰子"
+  },
+  "stone": {
+    "CardIndex": "2",
+    "CardName": "stone",
+    "CardText": "石头"
+  },
+  "heavy_stone": {
+    "CardIndex": "3",
+    "CardName": "heavy_stone",
+    "CardText": "大石块"
+  },
+  "coconut": {
+    "CardIndex": "4",
+    "CardName": "coconut",
+    "CardText": "椰子"
+  },
+  "sharpened_stone": {
+    "CardIndex": "5",
+    "CardName": "sharpened_stone",
+    "CardText": "石刀"
+  },
+  "coconut_water": {
+    "CardIndex": "6",
+    "CardName": "coconut_water",
+    "CardText": "椰子水"
+  },
+  "perforated_coconut": {
+    "CardIndex": "7",
+    "CardName": "perforated_coconut",
+    "CardText": "带孔椰子"
+  },
+  "coconut_half": {
+    "CardIndex": "8",
+    "CardName": "coconut_half",
+    "CardText": "半个椰子"
+  },
+  "coconut_meat": {
+    "CardIndex": "9",
+    "CardName": "coconut_meat",
+    "CardText": "椰肉"
+  },
+  "coconut_shell": {
+    "CardIndex": "10",
+    "CardName": "coconut_shell",
+    "CardText": "椰子壳"
+  },
+  "crab": {
+    "CardIndex": "11",
+    "CardName": "crab",
+    "CardText": "螃蟹"
+  }
+}
