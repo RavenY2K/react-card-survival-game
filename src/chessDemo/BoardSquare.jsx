@@ -1,5 +1,5 @@
 import React from "react";
-import Square from "./Square";
+import Square from "./square";
 import { useDrop } from "react-dnd";
 import { ItemTypes } from "./Constance";
 import { canMoveKnight, moveKnight } from "./Game";

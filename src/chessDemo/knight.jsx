@@ -24,11 +24,11 @@ export default function Knight() {
         cursor: "move",
       }}
     >
-      <img
+      {/* <img
         alt="1"
         // style={{ height: "10px", width: "10px" }}
         // src={knightImage}
-      />
+      /> */}
       ♘
     </div>
   );

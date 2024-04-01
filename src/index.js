@@ -1,15 +1,9 @@
 import { render } from "react-dom";
-import { Container } from "./example/Container";
+import { Container } from "./components/Container";
 import { DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
 import { TouchBackend } from "react-dnd-touch-backend";
-
-// 检测是否是移动设备
-function isMobileDevice() {
-  return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
-    navigator.userAgent
-  );
-}
+import { isMobileDevice } from "./utils/index.js";
 
 function App() {
   console.log(isMobileDevice());

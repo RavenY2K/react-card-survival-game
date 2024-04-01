@@ -1,6 +1,6 @@
 import React from "react";
 import Knight from "./Knight";
-import Square from "./Square";
+import Square from "./square";
 import { DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
 import { knightPosition, moveKnight,canMoveKnight } from "./Game";

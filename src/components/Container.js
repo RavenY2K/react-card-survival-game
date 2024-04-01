@@ -6,15 +6,25 @@ const style = {
   width: "100%",
   display: "flex",
   overflow: "auto",
+  flexDirection: "column",
+  flexWrap: "wrap", 
+  height:160,
   border: "1px solid lightGray",
+  marginTop:500,
 };
 console.log(cardInfo);
 export const Container = () => {
-
   const [cards, setCards] = useState([
     cardInfo.coconut,
     cardInfo.stone,
     cardInfo.coconut_half,
+    cardInfo.crab,
+    cardInfo.sharpened_stone,
+    cardInfo.coconut_meat,
+    cardInfo.coconut_water,
+    cardInfo.heavy_stone,
+    cardInfo.husked_coconut,
+    cardInfo.coconut_shell    
   ]);
   useEffect(() => {console.log(cards)});
 
