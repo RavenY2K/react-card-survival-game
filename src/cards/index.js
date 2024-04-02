@@ -1,25 +1,25 @@
-export const heavy_stone = {
-    CardIndex: 3,
-    CardText: "大石头",
-    CardName: "heavy_stone",
+const heavy_stone = {
+    cardID: 3,
+    cardText: "大石头",
+    cardName: "heavy_stone",
     //使用方式
-    UseType: [],
+    useType: [],
     //接受的交互物品
-    AcceptItem: {
+    acceptItem: {
       stone: {
-        CardIndex: 2,
-        CardText: "石头",
-        CardName: "stone",
+        cardID: 2,
+        cardText: "石头",
+        cardName: "stone",
         //交互名称
-        InteractionName: "打磨石刀",
+        interactionName: "打磨石刀",
         //交互花费时间
-        InteractionTime: 4,
+        interactionTime: 4,
         //产生的物品
-        ProduceItem: {
+        produceItem: {
           sharpened_stone: {
-            CardIndex: 5,
-            CardText: "石刀",
-            CardName: "sharpened_stone",
+            cardID: 5,
+            cardText: "石刀",
+            cardName: "sharpened_stone",
           },
         },
         //是否自我摧毁
@@ -30,28 +30,28 @@ export const heavy_stone = {
     },
   };
   
-export const stone = {
-    CardIndex: 2,
-    CardText: "石头",
-    CardName: "stone",
+const stone = {
+    cardID: 2,
+    cardText: "石头",
+    cardName: "stone",
     //使用方式
-    UseType: [],
+    useType: [],
     //接受的交互物品
-    AcceptItem: {
+    acceptItem: {
       heavy_stone: {
-        CardIndex: 3,
-        CardText: "大石头",
-        CardName: "heavy_stone",
+        cardID: 3,
+        cardText: "大石头",
+        cardName: "heavy_stone",
         //交互名称
-        InteractionName: "打磨石刀",
+        interactionName: "打磨石刀",
         //交互花费时间
-        InteractionTime: 4,
+        interactionTime: 4,
         //产生的物品
-        ProduceItem: {
+        produceItem: {
           sharpened_stone: {
-            CardIndex: 5,
-            CardText: "石刀",
-            CardName: "sharpened_stone",
+            cardID: 5,
+            cardText: "石刀",
+            cardName: "sharpened_stone",
           },
         },
         //是否自我摧毁
@@ -60,40 +60,40 @@ export const stone = {
     },
   };
   
-export const husked_coconut = {
-    CardIndex: 1,
-    CardText: "青椰子",
-    CardName: "husked_coconut",
+const husked_coconut = {
+    cardID: 1,
+    cardText: "青椰子",
+    cardName: "husked_coconut",
     //使用方式
-    UseType: [],
+    useType: [],
     //接受的交互物品
-    AcceptItem: {
+    acceptItem: {
       stone: {
-        CardIndex: 2,
-        CardText: "石头",
-        CardName: "stone",
+        cardID: 2,
+        cardText: "石头",
+        cardName: "stone",
         //交互名称
-        InteractionName: "剥",
+        interactionName: "剥",
         //交互花费时间
-        InteractionTime: 2,
+        interactionTime: 2,
         //产生的物品
-        ProduceItem: {
-          coconut: { CardIndex: 4, CardText: "椰子", CardName: "coconut" },
+        produceItem: {
+          coconut: { cardID: 4, cardText: "椰子", cardName: "coconut" },
         },
         //是否自我摧毁
         selfDestroy: true,
       },
       heavy_stone: {
-        CardIndex: 3,
-        CardText: "重石头",
-        CardName: "heavy_stone",
+        cardID: 3,
+        cardText: "重石头",
+        cardName: "heavy_stone",
         //交互名称
-        InteractionName: "剥",
+        interactionName: "剥",
         //交互花费时间
-        InteractionTime: 2,
+        interactionTime: 2,
         //产生的物品
-        ProduceItem: {
-          coconut: { CardIndex: 4, CardText: "椰子", CardName: "coconut" },
+        produceItem: {
+          coconut: { cardID: 4, cardText: "椰子", cardName: "coconut" },
         },
         //是否自我摧毁
         selfDestroy: true,
@@ -101,37 +101,38 @@ export const husked_coconut = {
     },
   };
   
-export const coconut_shell = {
-  CardIndex: 10,
-  CardText: "椰壳",
-  CardName: "coconut_shell",
+const coconut_shell = {
+  cardID: 10,
+  cardText: "椰壳",
+  cardName: "coconut_shell",
   //使用方式
-  UseType: [],
+  useType: [],
   //接受的交互物品
-  AcceptItem: {},
+  acceptItem: {},
 };
-export const coconut = {
-  CardIndex: 4,
-  CardText: "椰子",
-  CardName: "coconut",
+
+const coconut = {
+  cardID: 4,
+  cardText: "椰子",
+  cardName: "coconut",
   //使用方式
-  UseType: [],
+  useType: [],
   //接受的交互物品
-  AcceptItem: {
+  acceptItem: {
     stone: {
-      CardIndex: 2,
-      CardText: "石头",
-      CardName: "stone",
+      cardID: 2,
+      cardText: "石头",
+      cardName: "stone",
       //交互名称
-      InteractionName: "敲开椰子",
+      interactionName: "敲开椰子",
       //交互花费时间
-      InteractionTime: 0,
+      interactionTime: 0,
       //产生的物品
-      ProduceItem: {
+      produceItem: {
         coconut_half: {
-          CardIndex: 8,
-          CardText: "coconut_half",
-          CardName: "半个椰子",
+          cardID: 8,
+          cardText: "coconut_half",
+          cardName: "半个椰子",
           quantity: 2,
         },
       },
@@ -139,16 +140,16 @@ export const coconut = {
       selfDestroy: true,
     },
     heavy_stone: {
-      CardIndex: 3,
-      CardText: "重石头",
-      CardName: "heavy_stone",
+      cardID: 3,
+      cardText: "重石头",
+      cardName: "heavy_stone",
       //交互名称
-      InteractionName: "敲开椰子",
+      interactionName: "敲开椰子",
       //交互花费时间
-      InteractionTime: 0,
+      interactionTime: 0,
       //产生的物品
-      ProduceItem: {
-        coconut: { CardIndex: 4, CardText: "椰子", CardName: "coconut" },
+      produceItem: {
+        coconut: { cardID: 4, cardText: "椰子", cardName: "coconut" },
       },
       //是否自我摧毁
       selfDestroy: true,
@@ -156,28 +157,28 @@ export const coconut = {
   },
 };
 
-export const coconut_half = {
-  CardIndex: 8,
-  CardText: "半个椰子",
-  CardName: "coconut_half",
+const coconut_half = {
+  cardID: 8,
+  cardText: "半个椰子",
+  cardName: "coconut_half",
   //使用方式
-  UseType: [
+  useType: [
     {
       actionText: "吃",
       actionName: "eat",
       //是否自我摧毁
       selfDestroy: true,
       //产生的物品
-      ProduceItem: {
+      produceItem: {
         coconut_shell: {
-          CardIndex: 10,
-          CardText: "椰壳",
-          CardName: "coconut_shell",
+          cardID: 10,
+          cardText: "椰壳",
+          cardName: "coconut_shell",
         },
       },
     },
   ],
   //接受的交互物品
-  AcceptItem: {},
+  acceptItem: {},
 };
-
+export { coconut_half, coconut_shell, coconut, heavy_stone, stone, husked_coconut };

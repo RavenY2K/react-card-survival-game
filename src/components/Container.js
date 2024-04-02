@@ -1,15 +1,7 @@
 import update from "immutability-helper";
 import { useCallback, useState, useEffect } from "react";
-import cardInfo from "../xlsxInfo/CardInfo.json";
 import { Card } from "./Card.js";
-import {
-  coconut_half,
-  coconut_shell,
-  coconut,
-  heavy_stone,
-  stone,
-  husked_coconut,
-} from "../cards";
+import cardsInfo from "../cards";
 
 const style = {
   width: "100%",
@@ -22,22 +14,39 @@ const style = {
   border: "1px solid lightGray",
 };
 
-
 export const Container = () => {
   const [cards, setCards] = useState([
-    coconut_half,
-    coconut_shell,
-    coconut,
-    heavy_stone,
-    stone,
-    husked_coconut,
+    {
+      cardID: 2,
+      cardName: "stone",
+      cardText: "石头",
+    },
+    {
+      cardID: 1,
+      cardName: "husked_coconut",
+      cardText: "青椰子",
+    },
+    { cardID: 10, cardName: "coconut_shell", cardText: "椰壳" },
+    {
+      cardID: 3,
+      cardName: "heavy_stone",
+      cardText: "大石头",
+    },
+    {
+      cardID: 4,
+      cardName: "coconut",
+      cardText: "椰子",
+    },
+    { cardID: 8, cardText: "半个椰子", cardName: "coconut_half" },
   ]);
-const [activeCard, setActiveCard] = useState(null);
+  const [activeCard, setActiveCard] = useState(null);
   const moveCard = useCallback((dragIndex, hoverIndex) => {
     setCards((prevCards) =>
       update(prevCards, {
         $splice: [
           [dragIndex, 1],
+          [dragIndex, 0, prevCards[hoverIndex]],
+          [hoverIndex, 1],
           [hoverIndex, 0, prevCards[dragIndex]],
         ],
       })
@@ -49,11 +58,9 @@ const [activeCard, setActiveCard] = useState(null);
       <div style={style}>
         {cards.map((card, i) => (
           <Card
-            key={card.CardIndex}
+            key={card.cardID}
             index={i}
             card={card}
-            id={card.CardIndex}
-            text={card.CardText}
             moveCard={moveCard}
             activeCard={activeCard}
             setActiveCard={setActiveCard}
