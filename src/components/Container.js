@@ -2,32 +2,37 @@ import update from "immutability-helper";
 import { useCallback, useState, useEffect } from "react";
 import cardInfo from "../xlsxInfo/CardInfo.json";
 import { Card } from "./Card.js";
+import {
+  coconut_half,
+  coconut_shell,
+  coconut,
+  heavy_stone,
+  stone,
+  husked_coconut,
+} from "../cards";
+
 const style = {
   width: "100%",
+  height: 240,
   display: "flex",
+  flexFlow: "column wrap",
+  justifyContent: "space-between",
   overflow: "auto",
-  flexDirection: "column",
-  flexWrap: "wrap", 
-  height:160,
+  alignContent: "flex-start",
   border: "1px solid lightGray",
-  marginTop:500,
 };
-console.log(cardInfo);
+
+
 export const Container = () => {
   const [cards, setCards] = useState([
-    cardInfo.coconut,
-    cardInfo.stone,
-    cardInfo.coconut_half,
-    cardInfo.crab,
-    cardInfo.sharpened_stone,
-    cardInfo.coconut_meat,
-    cardInfo.coconut_water,
-    cardInfo.heavy_stone,
-    cardInfo.husked_coconut,
-    cardInfo.coconut_shell    
+    coconut_half,
+    coconut_shell,
+    coconut,
+    heavy_stone,
+    stone,
+    husked_coconut,
   ]);
-  useEffect(() => {console.log(cards)});
-
+const [activeCard, setActiveCard] = useState(null);
   const moveCard = useCallback((dragIndex, hoverIndex) => {
     setCards((prevCards) =>
       update(prevCards, {
@@ -38,20 +43,23 @@ export const Container = () => {
       })
     );
   }, []);
-  const renderCard = useCallback((card, index) => {
-    return (
-      <Card
-        key={card.CardIndex}
-        index={index}
-        id={card.CardIndex}
-        text={card.CardText}
-        moveCard={moveCard}
-      />
-    );
-  }, []);
+
   return (
     <>
-      <div style={style}>{cards.map((card, i) => renderCard(card, i))}</div>
+      <div style={style}>
+        {cards.map((card, i) => (
+          <Card
+            key={card.CardIndex}
+            index={i}
+            card={card}
+            id={card.CardIndex}
+            text={card.CardText}
+            moveCard={moveCard}
+            activeCard={activeCard}
+            setActiveCard={setActiveCard}
+          ></Card>
+        ))}
+      </div>
     </>
   );
 };
