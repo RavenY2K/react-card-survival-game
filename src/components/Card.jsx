@@ -2,7 +2,7 @@ import { useMemo, useRef, useState } from "react";
 import { useDrag, useDrop } from "react-dnd";
 import { ItemTypes } from "./ItemTypes.js";
 import { isMobileDevice } from "../utils/index";
-import * as cardsInfo from "../cards";
+import * as cardsInfo from "../cards/index.js";
 
 export const Card = ({
   card,

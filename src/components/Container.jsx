@@ -1,7 +1,7 @@
 import update from "immutability-helper";
 import { useCallback, useState, useEffect } from "react";
-import { Card } from "./Card.js";
-import cardsInfo from "../cards";
+import { Card } from "./Card.jsx";
+// import cardsInfo from "../cards/index.js";
 import { makeAutoObservable } from "mobx";
 
 class cardsStore {
@@ -45,7 +45,18 @@ class cardsStore {
   ]
 
   constructor() {
-    makeAutoObservable(this);
+    makeAutoObservable(this,{},{autoBind:true});
+  }
+
+  moveCard(dragIndex, hoverIndex) {
+    this.cards = update(this.cards, {
+      $splice: [
+        [dragIndex, 1],
+        [dragIndex, 0, this.cards[hoverIndex]],
+        [hoverIndex, 1],
+        [hoverIndex, 0, this.cards[dragIndex]],
+      ],
+    });
   }
 
   increment() {
@@ -56,6 +67,8 @@ class cardsStore {
     this.count -= 1;
   }
 }
+const store = new cardsStore();
+
 
 
 const style = {
@@ -109,6 +122,7 @@ export const Container = () => {
     },
   ]);
   const [activeCard, setActiveCard] = useState(null);
+
   const moveCard = useCallback((dragIndex, hoverIndex) => {
     setCards((prevCards) =>
       update(prevCards, {
