@@ -4,10 +4,18 @@ import { ItemTypes } from "./ItemTypes.js";
 import { isMobileDevice } from "../utils/index";
 import * as cardsInfo from "../cards";
 
-export const Card = ({ card, index, moveCard, activeCard, setActiveCard }) => {
+export const Card = ({
+  card,
+  index,
+  moveCard,
+  activeCard,
+  setActiveCard,
+  quantity,
+}) => {
   const { cardName, cardID, cardText } = card;
   const ref = useRef(null);
 
+  // useDrop
   const [{ handlerId, hovered }, drop] = useDrop({
     accept: ItemTypes.CARD,
     collect(monitor) {
@@ -25,6 +33,8 @@ export const Card = ({ card, index, moveCard, activeCard, setActiveCard }) => {
       moveCard(dragIndex, dropIndex);
     },
   });
+
+  //useDrag
   const [{ isDragging, canDrag }, drag, dragPreview] = useDrag({
     type: ItemTypes.CARD,
     item: () => {
@@ -42,8 +52,10 @@ export const Card = ({ card, index, moveCard, activeCard, setActiveCard }) => {
     // },
     canDrag: () => activeCard === null,
   });
+
   drag(drop(ref));
 
+  // 按钮组
   const buttonGroup = useMemo(() => {
     const cardInfo = cardsInfo[cardName];
     const { useType, acceptItem } = cardInfo;
@@ -74,17 +86,25 @@ export const Card = ({ card, index, moveCard, activeCard, setActiveCard }) => {
       }
       return arr;
     } else if (acceptItem[activeCard] !== undefined) {
-      // 如果选中的卡片满足其他条件，返回其他内容
+      // 如果选中的卡片可以交互，返回交互按钮
       return [
-        <button key="other">{acceptItem[activeCard].interactionName}</button>,
+        <button
+          onClick={() => {
+            setActiveCard(null);
+          }}
+          key="interact"
+        >
+          {acceptItem[activeCard].interactionName}
+        </button>,
       ];
     }
   }, [activeCard, cardName, setActiveCard]);
 
+  // 激活样式
   const activeStyle = useMemo(() => {
     const cardInfo = cardsInfo[cardName];
     const { acceptItem } = cardInfo;
-    if (hovered) return { backgroundColor: "#f7f7f7" };
+    if (hovered) return { backgroundColor: "#f4f4f4" };
     if (activeCard === null) return { backgroundColor: "white" };
     if (activeCard === cardName) return { backgroundColor: "white" };
     if (acceptItem[activeCard] !== undefined)
@@ -94,17 +114,45 @@ export const Card = ({ card, index, moveCard, activeCard, setActiveCard }) => {
 
   return (
     <div
-      ref={ref}
+      ref={dragPreview}
       style={{ ...style, ...activeStyle }}
       data-handler-id={handlerId}
     >
       {isDragging ? <div style={coverLayerStyle}></div> : null}
-      {cardText}
-      <div style={{ ...btnContainer }}>{buttonGroup}</div>
+      <div style={{ ...titleStyle }}>{cardText} </div>
+      <div style={{ ...quantityStyle }}>x{quantity} </div>
+
+      <div
+        style={{ width: "100%", height: 1, backgroundColor: "lightGray" }}
+      ></div>
+      <div ref={ref} style={{ ...btnContainer }}>
+        {buttonGroup}
+      </div>
     </div>
   );
 };
+const titleStyle = {
+  fontSize: 16,
+};
+const quantityStyle = {
+  //隐藏
 
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "center",
+  position: "absolute",
+  fontSize: 12,
+  width: 20,
+  fontWeight: 700,
+  height: 20,
+  right: -8,
+  top: -8,
+  color: "gray",
+  borderRadius: "50%",
+  border: "1px solid lightGray",
+  zIndex: 2,
+  backgroundColor: "#f1f1f1",
+};
 const style = {
   border: "1px solid lightGray",
   flex: "0 0 100px",
