@@ -6,7 +6,6 @@ import { TouchBackend } from "react-dnd-touch-backend";
 import { isMobileDevice } from "./utils/index.js";
 
 function App() {
-
   return (
     <div className="App">
       <DndProvider backend={isMobileDevice() ? TouchBackend : HTML5Backend}>

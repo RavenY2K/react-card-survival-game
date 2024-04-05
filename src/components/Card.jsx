@@ -1,17 +1,13 @@
-import { useMemo, useRef, useState } from "react";
+import { useMemo, useRef } from "react";
 import { useDrag, useDrop } from "react-dnd";
 import { ItemTypes } from "./ItemTypes.js";
 import { isMobileDevice } from "../utils/index";
-import * as cardsInfo from "../cards/index.js";
+import cardsInfo from "../cards/index.js";
+import store from "../store/cardStore.js";
+import { observer } from "mobx-react-lite";
 
-export const Card = ({
-  card,
-  index,
-  moveCard,
-  activeCard,
-  setActiveCard,
-  quantity,
-}) => {
+export const Card = observer(({ card, index, quantity }) => {
+  const { activeCard, setActiveCard, moveCard } = store;
   const { cardName, cardID, cardText } = card;
   const ref = useRef(null);
 
@@ -35,7 +31,7 @@ export const Card = ({
   });
 
   //useDrag
-  const [{ isDragging, canDrag }, drag, dragPreview] = useDrag({
+  const [{ isDragging }, drag, dragPreview] = useDrag({
     type: ItemTypes.CARD,
     item: () => {
       return { cardID, index, originIndex: index };
@@ -59,20 +55,24 @@ export const Card = ({
   const buttonGroup = useMemo(() => {
     const cardInfo = cardsInfo[cardName];
     const { useType, acceptItem } = cardInfo;
+
+    // 如果没有选中的卡片，返回"使用"按钮
     if (activeCard === null) {
-      // 如果没有选中的卡片，返回"使用"按钮
       return [
         <button key="use" onClick={() => setActiveCard(cardName)}>
           使用
         </button>,
       ];
-    } else if (activeCard === cardName) {
-      // 如果选中的卡片满足某个条件，返回"取消"按钮
+    }
+    // 如果选中的卡片满足某个条件，返回"取消"按钮
+    else if (activeCard === cardName) {
       const arr = [
         <button key="cancel" onClick={() => setActiveCard(null)}>
           取消
         </button>,
       ];
+
+      //useType按钮
       for (const item of useType) {
         arr.unshift(
           <button
@@ -85,32 +85,40 @@ export const Card = ({
         );
       }
       return arr;
-    } else if (acceptItem[activeCard] !== undefined) {
-      // 如果选中的卡片可以交互，返回交互按钮
+    }
+    // 如果选中的卡片可以交互，返回交互按钮
+    else if (acceptItem[activeCard] !== undefined) {
+      const action = acceptItem[activeCard];
       return [
         <button
           onClick={() => {
+            store.interaction(cardName,index,action);
             setActiveCard(null);
           }}
           key="interact"
         >
-          {acceptItem[activeCard].interactionName}
+          {action.interactionName}
         </button>,
       ];
     }
-  }, [activeCard, cardName, setActiveCard]);
+  }, [activeCard, cardName, index, setActiveCard]);
 
   // 激活样式
   const activeStyle = useMemo(() => {
     const cardInfo = cardsInfo[cardName];
     const { acceptItem } = cardInfo;
+    //如果拖拽时悬浮在该卡片上，背景浅灰色
     if (hovered) return { backgroundColor: "#f4f4f4" };
+    //如果没有激活卡片，背景默认白色
     if (activeCard === null) return { backgroundColor: "white" };
+    //如果选中的卡片是该卡片，背景白色
     if (activeCard === cardName) return { backgroundColor: "white" };
+    //如果选中的卡片可以交互，背景浅黄色
     if (acceptItem[activeCard] !== undefined)
       return { backgroundColor: "lightYellow" };
-    if (canDrag) return { backgroundColor: "#dddddd" };
-  }, [activeCard, canDrag, cardName, hovered]);
+    //如果不可交互,背景灰色
+    return { backgroundColor: "#dddddd" };
+  }, [activeCard, cardName, hovered]);
 
   return (
     <div
@@ -130,13 +138,13 @@ export const Card = ({
       </div>
     </div>
   );
-};
+});
+
+
 const titleStyle = {
   fontSize: 16,
 };
 const quantityStyle = {
-  //隐藏
-
   display: "flex",
   alignItems: "center",
   justifyContent: "center",
@@ -170,6 +178,7 @@ const style = {
 };
 const btnContainer = {
   flex: "auto",
+  width: "100%",
   display: "flex",
   flexDirection: "column",
   justifyContent: "flex-end",
