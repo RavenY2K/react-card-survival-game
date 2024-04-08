@@ -2,7 +2,7 @@ import update from "immutability-helper";
 import { useCallback, useState } from "react";
 import { Card } from "./Card.jsx";
 import store from "../store/cardStore.js";
-import { observer } from "mobx-react-lite"
+import { observer } from "mobx-react-lite";
 // import cardsInfo from "../cards/index.js";
 
 const style = {
@@ -17,22 +17,16 @@ const style = {
 };
 
 export const Container = observer(() => {
-
+  console.log("container render");
   return (
     <>
     <button onClick={()=>store.addCard('stone')}> 添加卡片</button>
     <button onClick={()=>store.removeCard('sharpened_stone')}> 移除卡片</button>
-      <div style={style}> 
-        {store.cards.map((card, i) => (
-          <Card
-            key={card.cardName+i}
-            index={i}
-            card={card}
-            quantity={card.quantity}
-          ></Card>
+      <div style={style}>
+        {store.cards.map((card) => (
+            <Card key={card.cardName} card={card}></Card>
         ))}
       </div>
     </>
   );
-}
-)
+});

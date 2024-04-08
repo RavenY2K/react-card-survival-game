@@ -1,4 +1,4 @@
-import { autorun, makeAutoObservable } from "mobx";
+import { autorun, makeAutoObservable, action } from "mobx";
 import update from "immutability-helper";
 import cardsInfo from "../cards";
 
@@ -6,36 +6,42 @@ class cardsStore {
   cards = [
     {
       cardID: 2,
+      order: 0,
       cardName: "stone",
       cardText: "石头",
       quantity: 1,
     },
     {
       cardID: 1,
+      order: 1,
       cardName: "husked_coconut",
       cardText: "青椰子",
       quantity: 1,
     },
     {
       cardID: 3,
+      order: 2,
       cardName: "heavy_stone",
       cardText: "大石头",
       quantity: 1,
     },
     {
       cardID: 10,
+      order: 3,
       cardName: "coconut_shell",
       cardText: "椰壳",
       quantity: 1,
     },
     {
       cardID: 4,
+      order: 4,
       cardName: "coconut",
       cardText: "椰子",
       quantity: 1,
     },
     {
       cardID: 8,
+      order: 5,
       cardText: "半个椰子",
       cardName: "coconut_half",
       quantity: 11,
@@ -48,9 +54,19 @@ class cardsStore {
 
   constructor() {
     makeAutoObservable(this, {}, { autoBind: true });
+    autorun(() => {
+      // console.log("observer", this.cards, this.activeCardIndex, this.GameTime);
+    });
   }
 
-  //卡片使用函数
+  //移动卡片
+  moveCard = action((dragCard, dropCard) => {
+    const temp = dragCard.order;
+    dragCard.order = dropCard.order;
+    dropCard.order = temp;
+  });
+
+  //卡片使用函数 useType
   useCard(cardName, actionName) {
     const cardInfo = cardsInfo[cardName];
     const { useType, acceptItem } = cardInfo;
@@ -89,26 +105,27 @@ class cardsStore {
 
     // 交互时间
     this.GameTime += interactionTime;
-    // 产生物品
-    if (Object.keys(produceItem).length > 0) {
 
-      Object.entries(produceItem).forEach(([produceCardName, { quantity }]) =>
-        this.addCard(produceCardName, quantity,cardIndex)
-      );
-    }
-    console.log(this.cards);
     // 自我摧毁
     if (selfDestroy) {
-      this.removeCard(cardsName);
+      this.removeCard(cardIndex);
     }
-    //催毁交互物品
+
+    // 产生物品
+    if (Object.keys(produceItem).length > 0) {
+      Object.entries(produceItem).forEach(([produceCardName, { quantity }]) =>
+        this.addCard(produceCardName, quantity, cardIndex)
+      );
+    }
+
+    //催毁交互物品(暂时废除)
     if (destroyActiveItem) {
-      this.removeCard(this.activeCard);
+      //   this.removeCard(this.activeCard);
     }
   }
 
-  setActiveCard(cardName) {
-    this.activeCard = cardName;
+  setActiveCard(card) {
+    this.activeCard = card;
   }
 
   //获取卡片数量
@@ -147,13 +164,10 @@ class cardsStore {
 
   /*
     移除卡片
-    cardName:卡片名称
+    cardIndex:卡片index
     quantity:卡片数量(默认为1)
   */
-  removeCard(cardName, quantity = 1) {
-    const cardIndex = this.cards.findIndex(
-      (card) => card.cardName === cardName
-    );
+  removeCard(cardIndex, quantity = 1) {
     //如果没有这个卡片
     if (cardIndex === -1) {
       return;
@@ -165,18 +179,6 @@ class cardsStore {
         this.cards.splice(cardIndex, 1);
       }
     }
-  }
-
-  //移动卡片
-  moveCard(dragIndex, hoverIndex) {
-    this.cards = update(this.cards, {
-      $splice: [
-        [dragIndex, 1],
-        [dragIndex, 0, this.cards[hoverIndex]],
-        [hoverIndex, 1],
-        [hoverIndex, 0, this.cards[dragIndex]],
-      ],
-    });
   }
 }
 const store = new cardsStore();

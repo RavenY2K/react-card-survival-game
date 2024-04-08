@@ -6,10 +6,18 @@ import cardsInfo from "../cards/index.js";
 import store from "../store/cardStore.js";
 import { observer } from "mobx-react-lite";
 
-export const Card = observer(({ card, index, quantity }) => {
+export const Card = observer(({ card }) => {
   const { activeCard, setActiveCard, moveCard } = store;
-  const { cardName, cardID, cardText } = card;
-  const ref = useRef(null);
+
+  const { cardName, cardID, cardText, quantity, order } = card;
+
+  const dragAreaRef = useRef(null);
+  const cardRef = useRef(null);
+
+  if (cardName === "stone") {
+    console.log("render");
+    // const a = cardRef.current?.getBoundingClientRect();
+  }
 
   // useDrop
   const [{ handlerId, hovered }, drop] = useDrop({
@@ -21,24 +29,23 @@ export const Card = observer(({ card, index, quantity }) => {
       };
     },
     drop: (item) => {
-      if (!ref.current) return;
-      const dragIndex = item.index;
-      const dropIndex = index;
+      if (!dragAreaRef.current) return;
+      const dragOrder = item.order;
+      const dropOrder = order;
       // Don't replace items with themselves
-      if (dragIndex === dropIndex) return;
-      moveCard(dragIndex, dropIndex);
+      if (dragOrder === dropOrder) return;
+      moveCard(item, card);
     },
   });
 
   //useDrag
   const [{ isDragging }, drag, dragPreview] = useDrag({
     type: ItemTypes.CARD,
-    item: () => {
-      return { cardID, index, originIndex: index };
-    },
+    item: () => card,
     collect: (monitor) => ({
       isDragging: monitor.isDragging(),
-      canDrag: monitor.canDrag(),
+      // 同时使用会有多次渲染bug
+      // canDrag: monitor.canDrag(),
     }),
     // end: (item, monitor) => {
     //   const didDrop = monitor.didDrop();
@@ -49,7 +56,8 @@ export const Card = observer(({ card, index, quantity }) => {
     canDrag: () => activeCard === null,
   });
 
-  drag(drop(ref));
+  drag(drop(dragAreaRef));
+  dragPreview(cardRef);
 
   // 按钮组
   const buttonGroup = useMemo(() => {
@@ -59,13 +67,13 @@ export const Card = observer(({ card, index, quantity }) => {
     // 如果没有选中的卡片，返回"使用"按钮
     if (activeCard === null) {
       return [
-        <button key="use" onClick={() => setActiveCard(cardName)}>
+        <button key="use" onClick={() => setActiveCard(card)}>
           使用
         </button>,
       ];
     }
-    // 如果选中的卡片满足某个条件，返回"取消"按钮
-    else if (activeCard === cardName) {
+    // 如果是选中的卡片，返回"取消"按钮
+    else if (activeCard === card) {
       const arr = [
         <button key="cancel" onClick={() => setActiveCard(null)}>
           取消
@@ -87,12 +95,12 @@ export const Card = observer(({ card, index, quantity }) => {
       return arr;
     }
     // 如果选中的卡片可以交互，返回交互按钮
-    else if (acceptItem[activeCard] !== undefined) {
-      const action = acceptItem[activeCard];
+    else if (acceptItem[activeCard.cardName] !== undefined) {
+      const action = acceptItem[activeCard.cardName];
       return [
         <button
           onClick={() => {
-            store.interaction(cardName,index,action);
+            store.interaction(cardName, order, action);
             setActiveCard(null);
           }}
           key="interact"
@@ -101,7 +109,7 @@ export const Card = observer(({ card, index, quantity }) => {
         </button>,
       ];
     }
-  }, [activeCard, cardName, index, setActiveCard]);
+  }, [activeCard, card, cardName, order, setActiveCard]);
 
   // 激活样式
   const activeStyle = useMemo(() => {
@@ -112,34 +120,32 @@ export const Card = observer(({ card, index, quantity }) => {
     //如果没有激活卡片，背景默认白色
     if (activeCard === null) return { backgroundColor: "white" };
     //如果选中的卡片是该卡片，背景白色
-    if (activeCard === cardName) return { backgroundColor: "white" };
+    if (activeCard === card) return { backgroundColor: "white" };
     //如果选中的卡片可以交互，背景浅黄色
-    if (acceptItem[activeCard] !== undefined)
+    if (acceptItem[activeCard.cardName] !== undefined)
       return { backgroundColor: "lightYellow" };
     //如果不可交互,背景灰色
     return { backgroundColor: "#dddddd" };
-  }, [activeCard, cardName, hovered]);
+  }, [activeCard, card, cardName, hovered]);
 
   return (
     <div
-      ref={dragPreview}
-      style={{ ...style, ...activeStyle }}
+      ref={cardRef}
+      style={{ ...style, ...activeStyle, order: order }}
       data-handler-id={handlerId}
     >
       {isDragging ? <div style={coverLayerStyle}></div> : null}
       <div style={{ ...titleStyle }}>{cardText} </div>
       <div style={{ ...quantityStyle }}>x{quantity} </div>
-
       <div
         style={{ width: "100%", height: 1, backgroundColor: "lightGray" }}
       ></div>
-      <div ref={ref} style={{ ...btnContainer }}>
+      <div ref={dragAreaRef} style={{ ...btnContainer }}>
         {buttonGroup}
       </div>
     </div>
   );
 });
-
 
 const titleStyle = {
   fontSize: 16,
@@ -167,6 +173,7 @@ const style = {
   width: "70px",
   margin: "3px",
   padding: "3px",
+  transition: "background 0.3s ease ",
   backgroundColor: "white",
   cursor: "pointer",
   position: "relative",
