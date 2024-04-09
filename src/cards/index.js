@@ -1,5 +1,4 @@
 const heavy_stone = {
-  cardID: 3,
   cardText: "大石头",
   cardName: "heavy_stone",
   //使用方式
@@ -7,7 +6,6 @@ const heavy_stone = {
   //接受的交互物品
   acceptItem: {
     // stone: {
-    //   cardID: 2,
     //   cardText: "石头",
     //   cardName: "stone",
     //   //交互名称
@@ -15,9 +13,8 @@ const heavy_stone = {
     //   //交互花费时间
     //   interactionTime: 4,
     //   //产生的物品
-    //   produceItem: {
+    //   produceItems: {
     //     sharpened_stone: {
-    //       cardID: 5,
     //       cardText: "石刀",
     //       cardName: "sharpened_stone",
     //     },
@@ -31,7 +28,6 @@ const heavy_stone = {
 };
 
 const stone = {
-  cardID: 2,
   cardText: "石头",
   cardName: "stone",
   //使用方式
@@ -39,7 +35,6 @@ const stone = {
   //接受的交互物品
   acceptItem: {
     heavy_stone: {
-      cardID: 3,
       cardText: "大石头",
       cardName: "heavy_stone",
       //交互名称
@@ -47,9 +42,8 @@ const stone = {
       //交互花费时间
       interactionTime: 4,
       //产生的物品
-      produceItem: {
+      produceItems: {
         sharpened_stone: {
-          cardID: 5,
           cardText: "石刀",
           cardName: "sharpened_stone",
         },
@@ -61,7 +55,6 @@ const stone = {
 };
 
 const husked_coconut = {
-  cardID: 1,
   cardText: "青椰子",
   cardName: "husked_coconut",
   //使用方式
@@ -69,7 +62,6 @@ const husked_coconut = {
   //接受的交互物品
   acceptItem: {
     stone: {
-      cardID: 2,
       cardText: "石头",
       cardName: "stone",
       //交互名称
@@ -77,14 +69,13 @@ const husked_coconut = {
       //交互花费时间
       interactionTime: 2,
       //产生的物品
-      produceItem: {
-        coconut: { cardID: 4, cardText: "椰子", cardName: "coconut" },
+      produceItems: {
+        coconut: { cardText: "椰子", cardName: "coconut", quantity: 1 },
       },
       //是否自我摧毁
       selfDestroy: true,
     },
     heavy_stone: {
-      cardID: 3,
       cardText: "重石头",
       cardName: "heavy_stone",
       //交互名称
@@ -92,8 +83,8 @@ const husked_coconut = {
       //交互花费时间
       interactionTime: 2,
       //产生的物品
-      produceItem: {
-        coconut: { cardID: 4, cardText: "椰子", cardName: "coconut" },
+      produceItems: {
+        coconut: {  cardText: "椰子", cardName: "coconut" },
       },
       //是否自我摧毁
       selfDestroy: true,
@@ -102,7 +93,6 @@ const husked_coconut = {
 };
 
 const coconut_shell = {
-  cardID: 10,
   cardText: "椰壳",
   cardName: "coconut_shell",
   //使用方式
@@ -112,7 +102,6 @@ const coconut_shell = {
 };
 
 const coconut = {
-  cardID: 4,
   cardText: "椰子",
   cardName: "coconut",
   //使用方式
@@ -120,7 +109,6 @@ const coconut = {
   //接受的交互物品
   acceptItem: {
     stone: {
-      cardID: 2,
       cardText: "石头",
       cardName: "stone",
       //交互名称
@@ -128,9 +116,8 @@ const coconut = {
       //交互花费时间
       interactionTime: 0,
       //产生的物品
-      produceItem: {
+      produceItems: {
         coconut_half: {
-          cardID: 8,
           cardText: "coconut_half",
           cardName: "半个椰子",
           quantity: 2,
@@ -140,7 +127,6 @@ const coconut = {
       selfDestroy: true,
     },
     heavy_stone: {
-      cardID: 3,
       cardText: "重石头",
       cardName: "heavy_stone",
       //交互名称
@@ -148,9 +134,8 @@ const coconut = {
       //交互花费时间
       interactionTime: 0,
       //产生的物品
-      produceItem: {
+      produceItems: {
         coconut_half: {
-          cardID: 8,
           cardText: "coconut_half",
           cardName: "半个椰子",
           quantity: 2,
@@ -163,7 +148,6 @@ const coconut = {
 };
 
 const coconut_half = {
-  cardID: 8,
   cardText: "半个椰子",
   cardName: "coconut_half",
   //使用方式
@@ -174,9 +158,8 @@ const coconut_half = {
       //是否自我摧毁
       selfDestroy: true,
       //产生的物品
-      produceItem: {
+      produceItems: {
         coconut_shell: {
-          cardID: 10,
           cardText: "椰壳",
           cardName: "coconut_shell",
         },
@@ -188,7 +171,6 @@ const coconut_half = {
 };
 
 const sharpened_stone = {
-  cardID: 5,
   cardText: "石刀",
   cardName: "sharpened_stone",
   //使用方式

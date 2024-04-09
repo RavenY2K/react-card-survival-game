@@ -15,16 +15,23 @@ const style = {
   alignContent: "flex-start",
   border: "1px solid lightGray",
 };
-
+window.store = store;
 export const Container = observer(() => {
   console.log("container render");
   return (
     <>
-    <button onClick={()=>store.addCard('stone')}> 添加卡片</button>
-    <button onClick={()=>store.removeCard('sharpened_stone')}> 移除卡片</button>
+      <button
+        onClick={() =>
+          store.addCard({ cardText: "大石头", cardName: "heavy_stone" },2)
+        }
+      >
+        {" "}
+        添加卡片
+      </button>
+      <button onClick={() => store.removeCard(store.cards[0])}>移除卡片</button>
       <div style={style}>
         {store.cards.map((card) => (
-            <Card key={card.cardName} card={card}></Card>
+          <Card key={card.id} card={card}></Card>
         ))}
       </div>
     </>

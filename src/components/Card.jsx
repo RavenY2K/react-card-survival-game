@@ -1,4 +1,4 @@
-import { useMemo, useRef } from "react";
+import { useCallback, useEffect, useMemo, useRef } from "react";
 import { useDrag, useDrop } from "react-dnd";
 import { ItemTypes } from "./ItemTypes.js";
 import { isMobileDevice } from "../utils/index";
@@ -7,54 +7,81 @@ import store from "../store/cardStore.js";
 import { observer } from "mobx-react-lite";
 
 export const Card = observer(({ card }) => {
-  const { activeCard, setActiveCard, moveCard } = store;
-
-  const { cardName, cardID, cardText, quantity, order } = card;
+  console.log(card.cardName, " render");
+  const { activeCard, setActiveCard, moveCard, newCards, addQuantityCards } =
+    store;
+  const { cardName, cardText, quantity, order } = card;
 
   const dragAreaRef = useRef(null);
+  //用于拖拽和移动动画
   const cardRef = useRef(null);
+  const oldPositionRef = useRef(card);
 
-  if (cardName === "stone") {
-    console.log("render");
-    // const a = cardRef.current?.getBoundingClientRect();
-  }
+  //移动后的动画
+  useEffect(() => {
+    // 计算新位置
+    const newPosition = cardRef.current?.getBoundingClientRect();
+    if (!newPosition) return;
 
-  // useDrop
-  const [{ handlerId, hovered }, drop] = useDrop({
-    accept: ItemTypes.CARD,
-    collect(monitor) {
-      return {
-        handlerId: monitor.getHandlerId(),
-        hovered: monitor.isOver(),
-      };
-    },
-    drop: (item) => {
-      if (!dragAreaRef.current) return;
-      const dragOrder = item.order;
-      const dropOrder = order;
-      // Don't replace items with themselves
-      if (dragOrder === dropOrder) return;
-      moveCard(item, card);
-    },
-  });
+    const oldPosition = oldPositionRef.current;
+    oldPositionRef.current = newPosition;
+
+    const dx = oldPosition.x - newPosition.x;
+    const dy = oldPosition.y - newPosition.y;
+
+    if (dx === 0 && dy === 0) return;
+
+    const style = cardRef.current.style;
+
+    style.transition = "transform 0s ease";
+    style.transform = `translate(${dx}px, ${dy}px)`;
+
+    setTimeout(() => {
+      style.transition = "transform 0.4s ease ";
+      style.transform = "translate(0,0)";
+    }, 0);
+  }, [cardName, order]);
 
   //useDrag
-  const [{ isDragging }, drag, dragPreview] = useDrag({
-    type: ItemTypes.CARD,
-    item: () => card,
-    collect: (monitor) => ({
-      isDragging: monitor.isDragging(),
-      // 同时使用会有多次渲染bug
-      // canDrag: monitor.canDrag(),
-    }),
-    // end: (item, monitor) => {
-    //   const didDrop = monitor.didDrop();
-    //   if (!didDrop) {
-    //     moveCard(item.index, item.originIndex);
-    //   }
-    // },
-    canDrag: () => activeCard === null,
-  });
+  const [{ isDragging }, drag, dragPreview] = useDrag(
+    useMemo(
+      () => ({
+        type: ItemTypes.CARD,
+        item: () => card,
+        collect: (monitor) => ({
+          isDragging: monitor.isDragging(),
+          // 同时使用会有多次渲染bug
+          // canDrag: monitor.canDrag(),
+        }),
+        canDrag: () => activeCard === null,
+      }),
+      [card, activeCard]
+    )
+  );
+
+  // useDrop
+  const [{ handlerId, hovered }, drop] = useDrop(
+    useMemo(
+      () => ({
+        accept: ItemTypes.CARD,
+        collect(monitor) {
+          return {
+            handlerId: monitor.getHandlerId(),
+            hovered: monitor.isOver(),
+          };
+        },
+        drop: (item) => {
+          if (!dragAreaRef.current) return;
+          const dragOrder = item.order;
+          const dropOrder = order;
+          // Don't replace items with themselves
+          if (dragOrder === dropOrder) return;
+          moveCard(item, card);
+        },
+      }),
+      [card, order, moveCard]
+    )
+  );
 
   drag(drop(dragAreaRef));
   dragPreview(cardRef);
@@ -100,7 +127,7 @@ export const Card = observer(({ card }) => {
       return [
         <button
           onClick={() => {
-            store.interaction(cardName, order, action);
+            store.interaction(card, action);
             setActiveCard(null);
           }}
           key="interact"
@@ -109,10 +136,11 @@ export const Card = observer(({ card }) => {
         </button>,
       ];
     }
-  }, [activeCard, card, cardName, order, setActiveCard]);
+  }, [activeCard, card, cardName, setActiveCard]);
 
   // 激活样式
   const activeStyle = useMemo(() => {
+    if (newCards.includes(order)) return { backgroundColor: "#b2c8b2" };
     const cardInfo = cardsInfo[cardName];
     const { acceptItem } = cardInfo;
     //如果拖拽时悬浮在该卡片上，背景浅灰色
@@ -126,22 +154,28 @@ export const Card = observer(({ card }) => {
       return { backgroundColor: "lightYellow" };
     //如果不可交互,背景灰色
     return { backgroundColor: "#dddddd" };
-  }, [activeCard, card, cardName, hovered]);
+  }, [activeCard, card, cardName, hovered, newCards, order]);
+
+  const addQuantityStyle = () => {
+    if (addQuantityCards.includes(order)) {
+      return { fontSize: 18 };
+    } else return { fontSize: 12 };
+  };
 
   return (
-    <div
-      ref={cardRef}
-      style={{ ...style, ...activeStyle, order: order }}
-      data-handler-id={handlerId}
-    >
-      {isDragging ? <div style={coverLayerStyle}></div> : null}
-      <div style={{ ...titleStyle }}>{cardText} </div>
-      <div style={{ ...quantityStyle }}>x{quantity} </div>
-      <div
-        style={{ width: "100%", height: 1, backgroundColor: "lightGray" }}
-      ></div>
-      <div ref={dragAreaRef} style={{ ...btnContainer }}>
-        {buttonGroup}
+    <div ref={cardRef} style={{ ...cardWapper, order }}>
+      <div style={{ ...style, ...activeStyle }} data-handler-id={handlerId}>
+        {isDragging ? <div style={coverLayerStyle}></div> : null}
+        <div style={{ ...titleStyle }}>{cardText} </div>
+        <div style={{ ...quantityStyle, ...addQuantityStyle() }}>
+          x{quantity}{" "}
+        </div>
+        <div
+          style={{ width: "100%", height: 1, backgroundColor: "lightGray" }}
+        ></div>
+        <div ref={dragAreaRef} style={{ ...btnContainer }}>
+          {buttonGroup}
+        </div>
       </div>
     </div>
   );
@@ -151,6 +185,7 @@ const titleStyle = {
   fontSize: 16,
 };
 const quantityStyle = {
+  transition: "font-size 0.3s ease",
   display: "flex",
   alignItems: "center",
   justifyContent: "center",
@@ -167,21 +202,26 @@ const quantityStyle = {
   zIndex: 2,
   backgroundColor: "#f1f1f1",
 };
-const style = {
+
+const cardWapper = {
   border: "1px solid lightGray",
   flex: "0 0 100px",
   width: "70px",
   margin: "3px",
   padding: "3px",
+  borderRadius: 7,
+  cursor: "pointer",
+};
+
+const style = {
+  height: "100%",
   transition: "background 0.3s ease ",
   backgroundColor: "white",
-  cursor: "pointer",
   position: "relative",
   display: "flex",
   flexDirection: "column",
   alignItems: "center",
   fontSize: 16,
-  borderRadius: 7,
 };
 const btnContainer = {
   flex: "auto",
