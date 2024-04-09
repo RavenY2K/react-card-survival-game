@@ -1,0 +1,5 @@
+/* CSS */
+.card {
+    transition: transform 1s; /* 设置1秒的过渡时间 */
+    transform: translateY(0); /* 初始位置 */
+  }

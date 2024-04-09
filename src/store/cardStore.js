@@ -54,17 +54,17 @@ class cardsStore {
 
   constructor() {
     makeAutoObservable(this, {}, { autoBind: true });
-    autorun(() => {
+    // autorun(() => {
       // console.log("observer", this.cards, this.activeCardIndex, this.GameTime);
-    });
+    // });
   }
 
   //移动卡片
-  moveCard = action((dragCard, dropCard) => {
+  moveCard(dragCard, dropCard) {
     const temp = dragCard.order;
     dragCard.order = dropCard.order;
     dropCard.order = temp;
-  });
+  }
 
   //卡片使用函数 useType
   useCard(cardName, actionName) {
