@@ -36,6 +36,13 @@ class cardsStore {
     {
       id: uuidv4(),
       order: 4,
+      cardName: "stone",
+      cardText: "石头",
+      quantity: 1,
+    },
+    {
+      id: uuidv4(),
+      order: 6,
       cardName: "coconut",
       cardText: "椰子",
       quantity: 1,
@@ -47,12 +54,38 @@ class cardsStore {
       cardName: "coconut_half",
       quantity: 11,
     },
+    {
+      id: uuidv4(),
+      order: 7,
+      cardText: "半个椰子",
+      cardName: "coconut_half",
+      quantity: 11,
+    },
   ];
 
   //新卡片
   newCards = [];
   //增加数量的卡片
-  addQuantityCards = [];
+  addedQuantityCards = [];
+  preTimer_newCards = null;
+  preTimer_addedQuantityCards = null;
+
+  //标记那些卡片是新加入的
+  addNewCard = (id) => {
+    this.newCards.push(id);
+    clearTimeout(this.preTimer_newCards);
+    this.preTimer_newCards = setTimeout(() => {
+      this.clearNewCards();
+    }, 400);
+  };
+  //标记那些卡片增加了数量
+  addAddedQuantityCard = (id) => {
+    this.addedQuantityCards.push(id);
+    clearTimeout(this.preTimer_addedQuantityCards);
+    this.preTimer_addedQuantityCards = setTimeout(() => {
+      this.clearAddQuantityCards();
+    }, 400);
+  };
 
   activeCard = null;
 
@@ -67,38 +100,55 @@ class cardsStore {
 
   //移动卡片
   moveCard(dragCard, dropCard) {
+    if (dragCard.cardName === dropCard.cardName) {
+      this.mergeCard(dragCard, dropCard);
+      return;
+    }
     const temp = dragCard.order;
     dragCard.order = dropCard.order;
     dropCard.order = temp;
   }
 
   //卡片使用函数 useType
-  useCard(cardName, actionName) {
-    const cardInfo = cardsInfo[cardName];
-    const { useType, acceptItem } = cardInfo;
-    const { produceItem, selfDestroy } = useType.find(
-      (item) => item.actionName === actionName
-    );
-    if (selfDestroy) {
-      this.removeCard(cardName);
-    }
-    if (produceItem) {
-      Object.entries(produceItem).forEach(
-        ([produceCardName, produceCardInfo]) => {
-          this.addCard(produceCardInfo);
-        }
-      );
+  useCard(card, action) {
+    const { useTime, produceItems, selfDestroy } = action;
+
+    //使用时间
+    this.GameTime += useTime;
+
+    //自我摧毁
+    const still_have_cards = selfDestroy ? this.removeCard(card) : true;
+
+    //产生物品数量
+    const produceCardNum = Object.keys(produceItems).length;
+    //后面卡牌的order后移x位
+    const orderChange = (still_have_cards ? 0 : -1) + produceCardNum;
+    this.updateCardOrderBehindOrder(card.order, orderChange);
+
+    // 产生物品
+    if (produceCardNum > 0) {
+      let newCardOrder = card.order + (still_have_cards ? 1 : 0);
+      Object.keys(produceItems).forEach((key) => {
+        const card = produceItems[key];
+        this.addCard({ ...card, id: uuidv4() }, newCardOrder++);
+      });
     }
   }
 
-  //清除新卡片
+  //order之后的牌后移x位置
+  updateCardOrderBehindOrder(order, x) {
+    this.cards.forEach((item) => {
+      if (item.order > order) item.order += x;
+    });
+  }
+
+  //清除新卡片标记
   clearNewCards() {
-    console.log("clearNewCards");
     this.newCards = [];
   }
-  //清除增加数量的卡片
+  //清除增加数量的卡片标记
   clearAddQuantityCards() {
-    this.addQuantityCards = [];
+    this.addedQuantityCards = [];
   }
 
   // 功能交互
@@ -127,11 +177,10 @@ class cardsStore {
 
     //产生物品数量
     const produceCardNum = Object.keys(produceItems).length;
+
     //后面卡牌的order后移x位
     const orderChange = (still_have_cards ? 0 : -1) + produceCardNum;
-    this.cards.forEach((item) => {
-      if (item.order > card.order) item.order += orderChange;
-    });
+    this.updateCardOrderBehindOrder(card.order, orderChange);
 
     // 产生物品
     if (produceCardNum > 0) {
@@ -157,6 +206,39 @@ class cardsStore {
     return this.cards.length;
   }
 
+  //合并卡片
+  mergeCard(fromCard, toCard) {
+    toCard.quantity += fromCard.quantity;
+    this.removeCard(fromCard, fromCard.quantity);
+
+    //from卡组消失，后面的卡牌都前移一位
+    this.updateCardOrderBehindOrder(fromCard.order, -1);
+    this.addAddedQuantityCard(toCard.id);
+  }
+
+  //去重卡片
+  sortCards() {
+    //去重cardNameSet
+    const cardNameSet = new Set(this.cards.map((item) => item.cardName));
+
+    this.cards.sort((a, b) => a.order - b.order);
+
+    //遍历cardNameSet
+    cardNameSet.forEach((cardName) => {
+      const arr = this.cards.filter((item) => item.cardName === cardName);
+      for (let i = 1; i < arr.length; i++) {
+        this.mergeCard(arr[i], arr[0]);
+      }
+    });
+    this.resetCardsOrder();
+  }
+
+  resetCardsOrder() {
+    this.cards.forEach((item, index) => {
+      item.order = index;
+    });
+  }
+
   /*
     添加卡片
     cardName: 卡片名称
@@ -170,21 +252,15 @@ class cardsStore {
 
     //如果有order位置没卡,就是在order位置新增栏位卡片
     if (cardIndex === -1) {
-      this.newCards.push(order);
-      setTimeout(() => {
-        this.clearNewCards();
-      }, 400);
-      this.cards.push({ ...card, quantity, order });
+      const curCard = { ...card, quantity, order };
+      this.cards.push(curCard);
+      this.addNewCard(curCard.id);
       return;
     }
 
     //如果order位置有卡，则增加卡片数量
     this.cards[cardIndex].quantity += quantity;
-    // this.addQuantityCards=[...this.addQuantityCards,order]
-    this.addQuantityCards.push(order);
-    setTimeout(() => {
-      this.clearAddQuantityCards()
-    }, 400);
+    this.addAddedQuantityCard(this.cards[cardIndex].id);
   }
 
   /*
@@ -198,10 +274,10 @@ class cardsStore {
     card.quantity -= quantity;
     //如果卡片数量为0,删除卡片
     if (card.quantity <= 0) {
-      this.cards.forEach((item) => {
-        //后面的卡牌都前移一位
-        // if (item.order > card.order) item.order--;
-      });
+      // this.cards.forEach((item) => {
+      //后面的卡牌都前移一位
+      // if (item.order > card.order) item.order--;
+      // });
 
       const cardIndex = this.cards.findIndex(
         (item) => item.order === card.order

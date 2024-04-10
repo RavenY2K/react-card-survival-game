@@ -8,8 +8,14 @@ import { observer } from "mobx-react-lite";
 
 export const Card = observer(({ card }) => {
   console.log(card.cardName, " render");
-  const { activeCard, setActiveCard, moveCard, newCards, addQuantityCards } =
-    store;
+  const {
+    activeCard,
+    setActiveCard,
+    moveCard,
+    newCards,
+    addedQuantityCards,
+    useCard,
+  } = store;
   const { cardName, cardText, quantity, order } = card;
 
   const dragAreaRef = useRef(null);
@@ -111,7 +117,9 @@ export const Card = observer(({ card }) => {
       for (const item of useType) {
         arr.unshift(
           <button
+            key={item.actionName}
             onClick={() => {
+              useCard(card, item);
               setActiveCard(null);
             }}
           >
@@ -136,11 +144,11 @@ export const Card = observer(({ card }) => {
         </button>,
       ];
     }
-  }, [activeCard, card, cardName, setActiveCard]);
+  }, [activeCard, card, cardName, setActiveCard, useCard]);
 
   // 激活样式
   const activeStyle = useMemo(() => {
-    if (newCards.includes(order)) return { backgroundColor: "#b2c8b2" };
+    if (newCards.includes(card.id)) return { backgroundColor: "#b2c8b2" };
     const cardInfo = cardsInfo[cardName];
     const { acceptItem } = cardInfo;
     //如果拖拽时悬浮在该卡片上，背景浅灰色
@@ -154,10 +162,10 @@ export const Card = observer(({ card }) => {
       return { backgroundColor: "lightYellow" };
     //如果不可交互,背景灰色
     return { backgroundColor: "#dddddd" };
-  }, [activeCard, card, cardName, hovered, newCards, order]);
+  }, [activeCard, card, cardName, hovered, newCards]);
 
   const addQuantityStyle = () => {
-    if (addQuantityCards.includes(order)) {
+    if (addedQuantityCards.includes(card.id)) {
       return { fontSize: 18 };
     } else return { fontSize: 12 };
   };

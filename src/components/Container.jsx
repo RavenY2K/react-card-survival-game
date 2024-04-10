@@ -30,6 +30,7 @@ export const Container = observer(() => {
       </button>
       <button onClick={() => store.removeCard(store.cards[0])}>移除卡片</button>
       <div style={style}>
+        {store.cards.length > 6 ? <button style={btnStyle} onClick={store.sortCards}>整理</button> : null}
         {store.cards.map((card) => (
           <Card key={card.id} card={card}></Card>
         ))}
@@ -37,3 +38,11 @@ export const Container = observer(() => {
     </>
   );
 });
+const btnStyle = {
+  position: "absolute",
+  width: 50,
+  height: 30,
+  opacity: 0.4,
+  zIndex: 1000,
+  right: 0,
+};

@@ -157,6 +157,8 @@ const coconut_half = {
       actionName: "eat",
       //是否自我摧毁
       selfDestroy: true,
+      //使用时间
+      useTime: 1,
       //产生的物品
       produceItems: {
         coconut_shell: {
