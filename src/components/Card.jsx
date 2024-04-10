@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useRef } from "react";
+import { useEffect, useMemo, useRef } from "react";
 import { useDrag, useDrop } from "react-dnd";
 import { ItemTypes } from "./ItemTypes.js";
 import { isMobileDevice } from "../utils/index";
@@ -166,8 +166,8 @@ export const Card = observer(({ card }) => {
 
   const addQuantityStyle = () => {
     if (addedQuantityCards.includes(card.id)) {
-      return { fontSize: 18 };
-    } else return { fontSize: 12 };
+      return { fontSize: 18, color: "#666666" };
+    } else return { fontSize: 12, color: "gray" };
   };
 
   return (

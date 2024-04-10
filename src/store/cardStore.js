@@ -23,7 +23,7 @@ class cardsStore {
       id: uuidv4(),
       order: 2,
       cardName: "heavy_stone",
-      cardText: "大石头",
+      cardText: "大石块",
       quantity: 1,
     },
     {
@@ -84,7 +84,7 @@ class cardsStore {
     clearTimeout(this.preTimer_addedQuantityCards);
     this.preTimer_addedQuantityCards = setTimeout(() => {
       this.clearAddQuantityCards();
-    }, 400);
+    }, 600);
   };
 
   activeCard = null;
@@ -93,9 +93,6 @@ class cardsStore {
 
   constructor() {
     makeAutoObservable(this, {}, { autoBind: true });
-    // autorun(() => {
-    // console.log("observer", this.cards, this.activeCardIndex, this.GameTime);
-    // });
   }
 
   //移动卡片
@@ -122,8 +119,8 @@ class cardsStore {
     //产生物品数量
     const produceCardNum = Object.keys(produceItems).length;
     //后面卡牌的order后移x位
-    const orderChange = (still_have_cards ? 0 : -1) + produceCardNum;
-    this.updateCardOrderBehindOrder(card.order, orderChange);
+    const orderChange = (still_have_cards ? 1 : 0) + produceCardNum;
+    this.updateCardOrderBehindOrder(card.order-1, orderChange);
 
     // 产生物品
     if (produceCardNum > 0) {
@@ -179,8 +176,8 @@ class cardsStore {
     const produceCardNum = Object.keys(produceItems).length;
 
     //后面卡牌的order后移x位
-    const orderChange = (still_have_cards ? 0 : -1) + produceCardNum;
-    this.updateCardOrderBehindOrder(card.order, orderChange);
+    const orderChange = (still_have_cards ? 1 : 0) + produceCardNum;
+    this.updateCardOrderBehindOrder(card.order-1, orderChange);
 
     // 产生物品
     if (produceCardNum > 0) {
@@ -210,9 +207,6 @@ class cardsStore {
   mergeCard(fromCard, toCard) {
     toCard.quantity += fromCard.quantity;
     this.removeCard(fromCard, fromCard.quantity);
-
-    //from卡组消失，后面的卡牌都前移一位
-    this.updateCardOrderBehindOrder(fromCard.order, -1);
     this.addAddedQuantityCard(toCard.id);
   }
 
@@ -274,17 +268,14 @@ class cardsStore {
     card.quantity -= quantity;
     //如果卡片数量为0,删除卡片
     if (card.quantity <= 0) {
-      // this.cards.forEach((item) => {
-      //后面的卡牌都前移一位
-      // if (item.order > card.order) item.order--;
-      // });
-
+      this.updateCardOrderBehindOrder(card.order, -1);
       const cardIndex = this.cards.findIndex(
         (item) => item.order === card.order
       );
       this.cards.splice(cardIndex, 1);
       return false;
     }
+
     return true;
   }
 }
