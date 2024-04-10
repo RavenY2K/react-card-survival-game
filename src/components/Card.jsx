@@ -146,6 +146,12 @@ export const Card = observer(({ card }) => {
     }
   }, [activeCard, card, cardName, setActiveCard, useCard]);
 
+  //背景图片样式
+  const bgImgStyle = useMemo(() => {
+    const src = `src/assets/Img/${cardName}.png`;
+    return { backgroundImage: ` url(${src})` };
+  }, [cardName]);
+
   // 激活样式
   const activeStyle = useMemo(() => {
     if (newCards.includes(card.id)) return { backgroundColor: "#b2c8b2" };
@@ -164,6 +170,7 @@ export const Card = observer(({ card }) => {
     return { backgroundColor: "#dddddd" };
   }, [activeCard, card, cardName, hovered, newCards]);
 
+  // 新增数量样式
   const addQuantityStyle = () => {
     if (addedQuantityCards.includes(card.id)) {
       return { fontSize: 18, color: "#666666" };
@@ -172,7 +179,10 @@ export const Card = observer(({ card }) => {
 
   return (
     <div ref={cardRef} style={{ ...cardWapper, order }}>
-      <div style={{ ...style, ...activeStyle }} data-handler-id={handlerId}>
+      <div
+        style={{ ...style, ...activeStyle, ...bgImgStyle }}
+        data-handler-id={handlerId}
+      >
         {isDragging ? <div style={coverLayerStyle}></div> : null}
         <div style={{ ...titleStyle }}>{cardText} </div>
         <div style={{ ...quantityStyle, ...addQuantityStyle() }}>
@@ -226,6 +236,7 @@ const style = {
   transition: "background 0.3s ease ",
   backgroundColor: "white",
   position: "relative",
+  background: "center/60px no-repeat",
   display: "flex",
   flexDirection: "column",
   alignItems: "center",

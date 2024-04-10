@@ -113,15 +113,17 @@ class cardsStore {
     //使用时间
     this.GameTime += useTime;
 
-    //自我摧毁
+    // 自我摧毁后是否还剩卡片站位
     const still_have_cards = selfDestroy ? this.removeCard(card) : true;
 
     //产生物品数量
     const produceCardNum = Object.keys(produceItems).length;
-    //后面卡牌的order后移x位
-    const orderChange = (still_have_cards ? 1 : 0) + produceCardNum;
-    this.updateCardOrderBehindOrder(card.order - 1, orderChange);
 
+    //后面卡牌的order后移x位
+    this.updateCardOrderBehindOrder(
+      card.order - (still_have_cards ? 0 : 1),
+      produceCardNum
+    );
     // 产生物品
     if (produceCardNum > 0) {
       let newCardOrder = card.order + (still_have_cards ? 1 : 0);
@@ -176,8 +178,10 @@ class cardsStore {
     const produceCardNum = Object.keys(produceItems).length;
 
     //后面卡牌的order后移x位
-    const orderChange = (still_have_cards ? 1 : 0) + produceCardNum;
-    this.updateCardOrderBehindOrder(card.order - 1, orderChange);
+    this.updateCardOrderBehindOrder(
+      card.order - (still_have_cards ? 0 : 1),
+      produceCardNum
+    );
 
     // 产生物品
     if (produceCardNum > 0) {
